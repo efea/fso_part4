@@ -15,8 +15,30 @@ const totalLikes = (blogs) => {
   return blogs.reduce(reducer, initialValue)
 
 }
+const favoriteBlog = (blogs) => {
+  if(blogs.length === 0) {
+    return null
+  }
+  let max = 0
+  let index = 0
+
+  for (let i = 0; i < blogs.length; i++) {
+    if(blogs[i].likes >= max){
+      max = blogs[i].likes
+      index = i
+    }
+  }
+  const favBlog = blogs[index]
+
+  return {
+    title: favBlog.title,
+    author: favBlog.author,
+    likes: favBlog.likes
+  }
+}
 
 module.exports = {
   dummy,
-  totalLikes
+  totalLikes,
+  favoriteBlog
 }
