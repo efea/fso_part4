@@ -90,6 +90,7 @@ describe('api testing..', () => {
 
   test('deleting with an id.. ', async () => {
     const initial = await helper.getAllBlogsFromDb()
+    expect(initial).toHaveLength(helper.sixBlogs.length)
     const target = initial[0].id
 
     await api
@@ -99,6 +100,30 @@ describe('api testing..', () => {
     const post = await helper.getAllBlogsFromDb()
     expect(post).toHaveLength(helper.sixBlogs.length - 1)
   })
+
+  test('updating a blog using its id..', async () => {
+    const initial = await helper.getAllBlogsFromDb()
+    expect(initial).toHaveLength(helper.sixBlogs.length)
+    const target = initial[0].id
+
+    await api
+      .put(`/api/blogs/${target}`)
+      .send(
+        {
+          'title': 'kivi naz',
+          'author': 'efea',
+          'url': 'www.c11.com',
+          'likes': 5
+        }
+      )
+      .expect(200)
+
+    const post = await helper.getAllBlogsFromDb()
+    expect(post).toHaveLength(helper.sixBlogs.length)
+    expect(post[0].title).toEqual('kivi naz')
+  })
+
+
 
   afterAll(async () => {
     await mongoose.connection.close()
