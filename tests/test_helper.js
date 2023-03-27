@@ -59,12 +59,11 @@ const sixBlogs = [
     __v: 0
   }
 ]
-
+/*
 const getAllBlogsFromDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map((blog) => blog.toJSON())
-}
-
+}*/
 
 const insertOneBlogToDb = async () => {
   const blog = new Blog(oneBlog)
@@ -74,6 +73,5 @@ const insertOneBlogToDb = async () => {
 module.exports = {
   oneBlog,
   sixBlogs,
-  getAllBlogsFromDb,
   insertOneBlogToDb
 }

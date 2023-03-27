@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const logger = require('../utils/logger')
 
 /*
  * notice how try/catch blocks are not used in this code
@@ -13,13 +14,13 @@ const Blog = require('../models/blog')
 */
 
 blogsRouter.get('/', async (request, response) => {
-  console.log('getting blogs..')
+  logger.info('getting blogs..')
   const blogs = await Blog.find({})
   response.json(blogs)
 })
 
 blogsRouter.post('/', async (request, response) => {
-  console.log('adding a blog..')
+  logger.info('adding a blog..')
   const blog = new Blog(request.body)
   const saved = await blog.save()
   response.status(201).json(saved.toJSON)

@@ -3,7 +3,6 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
-//const Blog = require('../models/blog')
 const api = supertest(app)
 
 beforeEach(async () => {
@@ -37,6 +36,24 @@ test('UID is named id..', async () => {
   blogs.forEach(element => {
     expect(element.id).toBeDefined()
   })
+}, 100000)
+
+test('a blog can be inserted to the db..', async () => {
+
+  const test = {
+    title: 'kivinaz cok yumo',
+    author: 'efeas',
+    url: 'www.c11.com',
+    likes: 4
+  }
+  await api
+    .post('/api/blogs')
+    .send(test)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(helper.sixBlogs.length + 1)
 }, 100000)
 
 afterAll(async () => {
