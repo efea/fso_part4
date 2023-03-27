@@ -16,12 +16,12 @@ describe('api testing..', () => {
  * we need not worry about it
  */
 
-
   test('blogs are returned as json..', async () => {
     await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
+
   }, 100000)
 
   test('there are six blogs..', async () => {
@@ -37,7 +37,6 @@ describe('api testing..', () => {
       expect(element.id).toBeDefined()
     })
   }, 100000)
-
   test('a blog can be inserted to the db..', async () => {
 
     const test = {
@@ -87,6 +86,18 @@ describe('api testing..', () => {
 
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(helper.sixBlogs.length)
+  })
+
+  test('deleting with an id.. ', async () => {
+    const initial = await helper.getAllBlogsFromDb()
+    const target = initial[0].id
+
+    await api
+      .delete(`/api/blogs/${target}`)
+      .expect(204)
+
+    const post = await helper.getAllBlogsFromDb()
+    expect(post).toHaveLength(helper.sixBlogs.length - 1)
   })
 
   afterAll(async () => {
