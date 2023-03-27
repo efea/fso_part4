@@ -10,7 +10,7 @@ beforeEach(async () => {
   await Blog.deleteMany({})
 
   await Blog.insertMany(helper.sixBlogs)
-})
+}, 100000)
 
 /*
  * supertest internally makes the server listen to ports
@@ -31,7 +31,13 @@ test('there are six blogs..', async () => {
   expect(response.body).toHaveLength(helper.sixBlogs.length)
 }, 100000)
 
-
+test('UID is named id..', async () => {
+  const response = await api.get('/api/blogs')
+  const blogs = response.body
+  blogs.forEach(element => {
+    expect(element.id).toBeDefined()
+  })
+}, 100000)
 
 afterAll(async () => {
   await mongoose.connection.close()
