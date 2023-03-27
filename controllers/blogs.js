@@ -1,6 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const logger = require('../utils/logger')
+const User = require('../models/user')
 
 /*
  * notice how try/catch blocks are not used in this code
@@ -21,8 +22,19 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   logger.info('adding a blog..')
-  const blog = new Blog(request.body)
+  const body = request.body
+  //logger.info('request body is..', body)
+  const user = await User.findById(body.id)
+  //const blog = new Blog(request.body)
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+    user: user._id
+  })
   const saved = await blog.save()
+  user.blogs = user.blogs.concat(saved._id)
   response.status(201).json(saved.toJSON)
 })
 

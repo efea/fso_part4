@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "kivi naz",
-  "author": "efea",
-  "url": "www.c7.com",
-  "likes": 4
+  "title": "yumo kivi",
+  "author": "edaa",
+  "url": "www.c44.com",
+  "likes": 4,
+  "id": "6421d026a55bb36f2cff4ade"
 }
