@@ -1,13 +1,12 @@
 const app = require('../app')
-const api = supertest(app)
 const supertest = require('supertest')
+const api = supertest(app)
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const helper = require('./test_helper')
 
 //...
-
-describe('when there is initially one user in db', () => {
+describe('user addition tests..', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
@@ -17,25 +16,91 @@ describe('when there is initially one user in db', () => {
     await user.save()
   })
 
-  test('creation succeeds with a fresh username', async () => {
-    const usersAtStart = await helper.usersInDb()
+  describe('when there is initially one user in db', () => {
 
-    const newUser = {
-      username: 'mluukkai',
-      name: 'Matti Luukkainen',
-      password: 'salainen',
-    }
 
-    await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
+    test('creation succeeds with a fresh username', async () => {
+      const usersAtStart = await helper.usersInDb()
 
-    const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+      const newUser = {
+        username: 'mluukkai',
+        name: 'Matti Luukkainen',
+        password: 'salainen',
+      }
 
-    const usernames = usersAtEnd.map(u => u.username)
-    expect(usernames).toContain(newUser.username)
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+      const usernames = usersAtEnd.map(u => u.username)
+      expect(usernames).toContain(newUser.username)
+    })
+  })
+
+  describe('adding faulty users', () => {
+    test('both username and password shorter than 3', async () => {
+      const usersAtStart = await helper.usersInDb()
+
+      const faultyUser = {
+        username: 'ml',
+        name: 'Matti Luukkainen',
+        password: 'sa',
+      }
+
+      await api
+        .post('/api/users')
+        .send(faultyUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+    })
+
+    test('only username shorter than 3', async () => {
+      const usersAtStart = await helper.usersInDb()
+
+      const faultyUser = {
+        username: 'ml',
+        name: 'Matti Luukkainen',
+        password: 'salainen',
+      }
+
+      await api
+        .post('/api/users')
+        .send(faultyUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+    })
+
+    test('only password shorter than 3', async () => {
+      const usersAtStart = await helper.usersInDb()
+
+      const faultyUser = {
+        username: 'mluukkai',
+        name: 'Matti Luukkainen',
+        password: 'sa',
+      }
+
+      await api
+        .post('/api/users')
+        .send(faultyUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+    })
   })
 })
