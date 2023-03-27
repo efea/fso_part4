@@ -74,8 +74,22 @@ describe('api testing..', () => {
     expect(response.body[response.body.length - 1].likes).toBe(0)
   })
 
+  test('responds with 400 if title or url are missing.. ', async () => {
+    const test = {
+      author: 'efe',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(test)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.sixBlogs.length)
+  })
+
   afterAll(async () => {
     await mongoose.connection.close()
   })
-
 })
