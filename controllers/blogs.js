@@ -4,19 +4,6 @@ const logger = require('../utils/logger')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  //logger.info('authorization of request is following..')
-  //logger.info(authorization)
-  if (authorization && authorization.startsWith('Bearer ')) {
-    //const what = authorization.replace('Bearer ', '')
-    //logger.info('extracted token is following..')
-    //logger.info(what)
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
 /*
  * notice how try/catch blocks are not used in this code
  * even though it can result in not handled exceptions.
@@ -37,12 +24,15 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   logger.info('adding a blog..')
+
   const body = request.body
   logger.info('body.userId is: ', body.userId)
-  const tokentoprint = getTokenFrom(request)
+
+  const tokentoprint = request.token
   logger.info('token from request is following..')
   logger.info(tokentoprint)
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+
+  const decodedToken = jwt.verify(tokentoprint, process.env.SECRET)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
