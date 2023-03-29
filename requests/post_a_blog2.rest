@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "yumo kivi",
+  "title": "a new blog without userid",
   "author": "edaa",
   "url": "www.c7.com",
-  "likes": 4
+  "likes": 4,
+  "id": "64222cd40e3f31e321e8d55e"
 }

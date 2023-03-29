@@ -16,6 +16,7 @@ const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   logger.info('getting blogs..')
+  //const blogs = await Blog.find({}).populate('user','64222cd40e3f31e321e8d55e')
   const blogs = await Blog.find({})
   response.json(blogs)
 })
@@ -23,18 +24,38 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   logger.info('adding a blog..')
   const body = request.body
-  //logger.info('request body is..', body)
-  const user = await User.findById(body.id)
-  //const blog = new Blog(request.body)
+
+  logger.info('body.userId is: ', body.userId)
+
+  const oneuser = await User.findOne({})
+  const oneuserid = oneuser.id
+  //logger.info('one userid is following..')
+  //logger.info(oneuserid)
+
+  const finalUserId = body.userId === undefined
+    ? oneuserid: body.userId
+
+
+  const user = await User.findById(finalUserId)
+  //logger.info('user found from is following..')
+  //logger.info(user)
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes,
-    user: user._id
+    user: user.id
   })
   const saved = await blog.save()
+
+  /*
+   * Note that we are also changing the user.
+   * the blogs property of the user is concatanated with the new blog id..
+   * then saved to the DB..
+   */
   user.blogs = user.blogs.concat(saved._id)
+  await user.save()
+
   response.status(201).json(saved.toJSON)
 })
 

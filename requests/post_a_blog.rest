@@ -1,10 +1,10 @@
-POST http://localhost:3003/api/blogs
+POST http://localhost:3003/api/blogs 
 Content-Type: application/json
 
 {
-  "title": "yumo kivi",
-  "author": "edaa",
-  "url": "www.c44.com",
-  "likes": 4,
-  "id": "6421d026a55bb36f2cff4ade"
+    "title": "hayır adım aslında kivi", 
+    "author": "hehehe", 
+    "url": "www.balkon.com", 
+    "likes": 4, 
+    "userId": "6424068b6cd4c4cf02424a0b"
 }
