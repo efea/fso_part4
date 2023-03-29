@@ -13,14 +13,14 @@ const unknownEndpoint = (request, response) => {
 
 const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
-  //logger.info('authorization of request is following..')
-  //logger.info(authorization)
+  logger.info('authorization of request is following..')
+  logger.info(authorization)
   if (authorization && authorization.startsWith('Bearer ')) {
-    //const what = authorization.replace('Bearer ', '')
-    //logger.info('extracted token is following..')
-    //logger.info(what)
+    const what = authorization.replace('Bearer ', '')
+    logger.info('extracted token is following..')
+    logger.info(what)
     //return authorization.replace('Bearer ', '')
-    request.token = authorization.replace('Bearer ', '')
+    request.token = what
   }
 
   next()

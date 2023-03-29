@@ -17,8 +17,8 @@ const jwt = require('jsonwebtoken')
 
 blogsRouter.get('/', async (request, response) => {
   logger.info('getting blogs..')
-  //const blogs = await Blog.find({}).populate('user','64222cd40e3f31e321e8d55e')
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user',{ username: 1, name: 1, id: 1 })
+  //const blogs = await Blog.find({})
   response.json(blogs)
 })
 
@@ -71,8 +71,29 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+  //await Blog.findByIdAndRemove(request.params.id)
+  //response.status(204).end()
+  const token = request.token
+  if(token === undefined){
+    return response.status(401).json({ error: 'no token found in the request' })
+  }
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!decodedToken.id) {
+    logger.info('do we come here actually or do we throw error from jwt.verify??')
+    return response.status(401).json({ error: 'no user associated with this token' })
+  }
+
+  const id = request.params.id
+  const blog = await Blog.findById(id)
+
+  if (decodedToken.id.toString() === blog.user.toString()) {
+    await Blog.findByIdAndRemove(blog.id)
+    response.sendStatus(204)
+  }
+  else{
+    response.status(401).json({ error:'unable to delete blog. user from token does not match.' })
+  }
+
 })
 
 blogsRouter.put('/:id', async (request, response) => {
