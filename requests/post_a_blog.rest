@@ -5,6 +5,5 @@ Content-Type: application/json
     "title": "hayır adım aslında kivi", 
     "author": "hehehe", 
     "url": "www.balkon.com", 
-    "likes": 4, 
-    "userId": "6424068b6cd4c4cf02424a0b"
+    "likes": 4
 }
