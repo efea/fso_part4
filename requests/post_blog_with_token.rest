@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImtpdmkiLCJpZCI6IjY0MjQwNjhiNmNkNGM0Y2YwMjQyNGEwYiIsImlhdCI6MTY4MDA5MDE3OX0.F7BzvMEX4zgzTaPduMGF4E5rVfHgv-qnL7HiL5mQi_U
+
+{
+  "title": "testing a blog post with token",
+  "author": "edaa",
+  "url": "www.c7.com",
+  "likes": 4,
+  "id": "64222cd40e3f31e321e8d55e"
+}

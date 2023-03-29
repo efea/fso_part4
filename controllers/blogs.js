@@ -2,7 +2,21 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const logger = require('../utils/logger')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  //logger.info('authorization of request is following..')
+  //logger.info(authorization)
+  if (authorization && authorization.startsWith('Bearer ')) {
+    //const what = authorization.replace('Bearer ', '')
+    //logger.info('extracted token is following..')
+    //logger.info(what)
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
 /*
  * notice how try/catch blocks are not used in this code
  * even though it can result in not handled exceptions.
@@ -24,19 +38,26 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   logger.info('adding a blog..')
   const body = request.body
-
   logger.info('body.userId is: ', body.userId)
+  const tokentoprint = getTokenFrom(request)
+  logger.info('token from request is following..')
+  logger.info(tokentoprint)
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
 
-  const oneuser = await User.findOne({})
-  const oneuserid = oneuser.id
+  //const oneuser = await User.findOne({})
+  //const oneuserid = oneuser.id
   //logger.info('one userid is following..')
   //logger.info(oneuserid)
 
-  const finalUserId = body.userId === undefined
-    ? oneuserid: body.userId
+  //const finalUserId = body.userId === undefined
+  //  ? oneuserid: body.userId
 
 
-  const user = await User.findById(finalUserId)
+  //const user = await User.findById(finalUserId)
   //logger.info('user found from is following..')
   //logger.info(user)
   const blog = new Blog({
