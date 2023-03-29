@@ -1,8 +1,9 @@
 const blogsRouter = require('express').Router()
+//const middleware = require('../utils/middleware.js')
 const Blog = require('../models/blog')
 const logger = require('../utils/logger')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+//const User = require('../models/user')
+//const jwt = require('jsonwebtoken')
 
 /*
  * notice how try/catch blocks are not used in this code
@@ -27,17 +28,17 @@ blogsRouter.post('/', async (request, response) => {
 
   const body = request.body
   logger.info('body.userId is: ', body.userId)
+  const user = request.user
+  //const tokentoprint = request.token
+  //logger.info('token from request is following..')
+  //logger.info(tokentoprint)
 
-  const tokentoprint = request.token
-  logger.info('token from request is following..')
-  logger.info(tokentoprint)
-
-  const decodedToken = jwt.verify(tokentoprint, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
+  //const decodedToken = jwt.verify(tokentoprint, process.env.SECRET)
+  if (!user) {
+    return response.status(401).json({ error: 'can not add the blog, no user found in userExtract' })
   }
-  const user = await User.findById(decodedToken.id)
-
+  //const user = await User.findById(decodedToken.id)
+  //const user = request.user
   //const oneuser = await User.findOne({})
   //const oneuserid = oneuser.id
   //logger.info('one userid is following..')
@@ -74,11 +75,12 @@ blogsRouter.delete('/:id', async (request, response) => {
   //await Blog.findByIdAndRemove(request.params.id)
   //response.status(204).end()
   const token = request.token
+  const user = request.user
   if(token === undefined){
     return response.status(401).json({ error: 'no token found in the request' })
   }
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!decodedToken.id) {
+  //const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!user) {
     logger.info('do we come here actually or do we throw error from jwt.verify??')
     return response.status(401).json({ error: 'no user associated with this token' })
   }
@@ -86,7 +88,7 @@ blogsRouter.delete('/:id', async (request, response) => {
   const id = request.params.id
   const blog = await Blog.findById(id)
 
-  if (decodedToken.id.toString() === blog.user.toString()) {
+  if (user.id.toString() === blog.user.toString()) {
     await Blog.findByIdAndRemove(blog.id)
     response.sendStatus(204)
   }
